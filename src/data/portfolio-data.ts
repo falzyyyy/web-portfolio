@@ -1,7 +1,6 @@
 import { FaGithub, FaHtml5, FaVideo, FaPalette } from "react-icons/fa";
 import {
   SiJavascript,
-  SiPhp,
   SiLaravel,
   SiMysql,
   SiGooglecloud,
