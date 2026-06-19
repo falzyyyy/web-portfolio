@@ -40,19 +40,19 @@ export default function ImageCropperModal({ isOpen, imageSrc, onClose, onCropCom
   if (!isOpen || !imageSrc) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-[var(--theme-bg)] border-[4px] border-[var(--theme-border)] shadow-[8px_8px_0px_0px_var(--theme-border)] w-full max-w-2xl flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/55 backdrop-blur-sm">
+      <div className="bg-[var(--theme-bg-card)] border-2.5 border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)] w-full max-w-xl flex flex-col max-h-[85vh] rounded-2xl overflow-hidden font-sans">
         
         {/* Header */}
-        <div className="flex justify-between items-center p-4 border-b-[4px] border-[var(--theme-border)] bg-[var(--neo-cyan)]">
-          <h2 className="text-xl font-black uppercase">Crop Image</h2>
-          <button onClick={onClose} className="p-1 hover:bg-[var(--neo-pink)] border-2 border-transparent hover:border-[var(--theme-border)] transition-colors">
-            <FiX size={24} />
+        <div className="flex justify-between items-center p-4 border-b-2 border-[var(--theme-border)] bg-[var(--theme-bg-workspace)]">
+          <h2 className="text-sm font-heading font-extrabold text-[var(--theme-text-primary)]">Crop Image</h2>
+          <button onClick={onClose} className="p-1 hover:bg-zinc-200 dark:hover:bg-zinc-700 border border-transparent hover:border-black transition-all rounded-md text-[var(--theme-text-secondary)] hover:text-[var(--theme-text-primary)] cursor-pointer">
+            <FiX size={18} />
           </button>
         </div>
 
         {/* Cropper Container */}
-        <div className="relative w-full h-[50vh] sm:h-[60vh] bg-gray-100">
+        <div className="relative w-full h-[40vh] sm:h-[45vh] bg-zinc-100 dark:bg-zinc-900 border-b-2 border-[var(--theme-border)]">
           <Cropper
             image={imageSrc}
             crop={crop}
@@ -62,16 +62,16 @@ export default function ImageCropperModal({ isOpen, imageSrc, onClose, onCropCom
             onCropComplete={onCropCompleteAction}
             onZoomChange={setZoom}
             style={{
-              containerStyle: { backgroundColor: '#f0f0f0' },
-              cropAreaStyle: { border: '4px solid var(--theme-border)' }
+              containerStyle: { backgroundColor: '#f9f9f9' },
+              cropAreaStyle: { border: '2.5px solid var(--theme-border)' }
             }}
           />
         </div>
 
         {/* Controls */}
-        <div className="p-4 border-t-[4px] border-[var(--theme-border)] bg-[var(--theme-bg-card)] flex flex-col sm:flex-row gap-4 items-center justify-between">
-          <div className="flex-1 w-full flex items-center gap-4">
-            <label className="font-bold uppercase text-sm">Zoom</label>
+        <div className="p-4 bg-[var(--theme-bg-card)] flex flex-col sm:flex-row gap-4 items-center justify-between">
+          <div className="flex-1 w-full flex items-center gap-3">
+            <label className="text-xs font-mono font-bold text-[var(--theme-text-secondary)] uppercase">Zoom</label>
             <input
               type="range"
               value={zoom}
@@ -80,14 +80,15 @@ export default function ImageCropperModal({ isOpen, imageSrc, onClose, onCropCom
               step={0.1}
               aria-labelledby="Zoom"
               onChange={(e) => setZoom(Number(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[var(--neo-purple)]"
+              className="w-full h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-[var(--notion-blue)]"
             />
           </div>
           <button 
             onClick={handleSave}
-            className="w-full sm:w-auto bg-[var(--neo-yellow)] font-black uppercase px-6 py-2 border-[3px] border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center justify-center gap-2"
+            className="w-full sm:w-auto neo-brutal-btn bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)] py-2 text-xs flex items-center justify-center gap-1.5"
           >
-            <FiCheck size={18} /> Apply Crop
+            <FiCheck size={14} /> 
+            <span>Apply Crop</span>
           </button>
         </div>
       </div>

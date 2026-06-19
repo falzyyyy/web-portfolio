@@ -11,30 +11,30 @@ export default function DeleteModal({ isOpen, onClose, onConfirm, itemName }: De
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
-      <div className="bg-[var(--theme-bg-card)] border-[4px] border-[var(--theme-border)] shadow-[8px_8px_0px_0px_var(--theme-border)] w-full max-w-md animate-in fade-in zoom-in duration-200">
-        <div className="bg-[var(--neo-pink)] border-b-[4px] border-[var(--theme-border)] p-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-[#1A1A1A] font-black uppercase tracking-wider text-xl">
-            <FiAlertTriangle size={24} />
-            <span>Warning!</span>
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <div className="bg-[var(--theme-bg-card)] border-2.5 border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)] w-full max-w-sm animate-in fade-in zoom-in duration-200 rounded-2xl overflow-hidden">
+        <div className="border-b-2 border-[var(--theme-border)] p-4 flex items-center justify-between bg-[var(--theme-bg-workspace)]">
+          <div className="flex items-center gap-1.5 text-[var(--theme-text-primary)] font-heading font-extrabold text-sm">
+            <FiAlertTriangle size={16} className="text-amber-500" />
+            <span>Confirm Deletion</span>
           </div>
-          <button onClick={onClose} className="text-[#1A1A1A] hover:bg-black/10 p-1 transition-colors">
-            <FiX size={24} />
+          <button onClick={onClose} className="text-[var(--theme-text-secondary)] hover:bg-zinc-200 dark:hover:bg-zinc-700 p-1 transition-colors rounded-md cursor-pointer border border-transparent hover:border-black">
+            <FiX size={16} />
           </button>
         </div>
         
-        <div className="p-6">
-          <p className="text-xl font-black text-[#1A1A1A] mb-2 uppercase">
-            Are you sure?
-          </p>
-          <p className="font-medium text-[var(--theme-text-secondary)] mb-8">
-            This action cannot be undone. This will permanently delete {itemName ? <span className="font-bold text-[var(--neo-pink)] bg-gray-100 px-1">"{itemName}"</span> : "this item"} from your portfolio.
+        <div className="p-5">
+          <h4 className="text-base font-heading font-extrabold text-[var(--theme-text-primary)] mb-2">
+            Are you absolutely sure?
+          </h4>
+          <p className="text-xs sm:text-sm text-[var(--theme-text-secondary)] mb-6 font-sans font-semibold leading-relaxed">
+            This action cannot be undone. This will permanently delete {itemName ? <span className="font-heading font-extrabold text-[var(--tag-pink-text)] bg-[var(--tag-pink-bg)] border border-black px-1.5 py-0.5 rounded shadow-[1px_1px_0px_0px_black]">"{itemName}"</span> : "this record"} from the database.
           </p>
           
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <button 
               onClick={onClose}
-              className="flex-1 px-4 py-3 font-black uppercase tracking-widest border-[3px] border-[var(--theme-border)] bg-gray-200 text-[#1A1A1A] shadow-[4px_4px_0px_0px_var(--theme-border)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+              className="flex-1 neo-brutal-btn bg-white hover:bg-[var(--tag-gray-bg)] py-2 text-xs"
             >
               Cancel
             </button>
@@ -43,7 +43,7 @@ export default function DeleteModal({ isOpen, onClose, onConfirm, itemName }: De
                 onConfirm();
                 onClose();
               }}
-              className="flex-1 px-4 py-3 font-black uppercase tracking-widest border-[3px] border-[var(--theme-border)] bg-[var(--neo-pink)] text-[#1A1A1A] shadow-[4px_4px_0px_0px_var(--theme-border)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all"
+              className="flex-1 neo-brutal-btn bg-[var(--tag-red-bg)] text-[var(--tag-red-text)] py-2 text-xs"
             >
               Delete
             </button>

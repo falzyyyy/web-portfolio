@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { HiArrowDown } from "react-icons/hi";
-import { FiDownload, FiArrowRight } from "react-icons/fi";
+import { HiArrowDown as ArrowDownIcon } from "react-icons/hi";
+import { FiDownload, FiArrowRight, FiZap, FiCalendar, FiUser } from "react-icons/fi";
 import { supabase } from "../lib/supabase";
 
 export default function Hero() {
@@ -25,37 +25,112 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative min-h-screen bg-[var(--theme-bg)] flex items-center justify-center pt-20 px-6 overflow-hidden"
+      className="relative min-h-screen bg-[var(--theme-bg)] flex flex-col justify-start pt-24 pb-10 px-4 sm:px-6 overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto h-full flex flex-col lg:flex-row items-center justify-center gap-12 w-full relative z-10">
-        
-        {/* Left Column: Text Content */}
-        <div className="flex-1 text-center lg:text-left flex flex-col items-center lg:items-start">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="inline-block px-4 py-2 mb-6 bg-[var(--neo-purple)] text-white font-bold border-2 border-[var(--theme-border)] shadow-[2px_2px_0px_0px_var(--theme-border)] rounded-full text-sm">
-              Hi, my name is {name.split(" ")[0]}.
-            </div>
-            
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black heading-neo text-[var(--theme-text-primary)] mb-6 leading-tight">
-              I am an <br />
-              <span className="text-[var(--neo-pink)]" style={{ WebkitTextStroke: '2px var(--theme-border)', textShadow: '4px 4px 0px var(--theme-border)' }}>
-                {roles[0] || "IT Professional"}
-              </span> <br />
-              & Engineer.
-            </h1>
-            
-            <p className="text-lg sm:text-xl text-[var(--theme-text-secondary)] font-medium mb-10 max-w-2xl mx-auto lg:mx-0">
-              {tagline}
-            </p>
+      <div className="max-w-5xl mx-auto w-full border-2.5 border-[var(--theme-border)] rounded-2xl overflow-hidden bg-[var(--theme-bg-card)] shadow-[6px_6px_0px_0px_var(--theme-border)]">
+        {/* Notion-style Page Cover Banner (3D Asset Layout) */}
+        <div className="relative h-48 sm:h-64 w-full overflow-hidden border-b-2.5 border-[var(--theme-border)] bg-zinc-100 dark:bg-zinc-800">
+          <img 
+            src="/notion-cover.png" 
+            alt="Notion Style 3D Cover" 
+            className="w-full h-full object-cover"
+          />
+          {/* Workspace Status Badge */}
+          <div className="absolute top-4 right-4 px-3 py-1 bg-white border-2 border-black rounded-lg text-xs font-mono font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-[#18181b]">
+            🔒 Workspace: Public
+          </div>
+          
+          {/* Floating Mascot (3D rocket-laptop icon from public folder) */}
+          <div className="absolute right-6 -bottom-8 w-24 h-24 sm:w-32 sm:h-32 z-10 animate-float pointer-events-none drop-shadow-[5px_5px_0px_rgba(0,0,0,0.15)]">
+            <img 
+              src="/notion-avatar.png" 
+              alt="3D Rocket Laptop Mascot" 
+              className="w-full h-full object-contain"
+            />
+          </div>
+        </div>
 
-            <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-              <a href="#projects" className="neo-btn">
-                View My Work
-                <FiArrowRight size={20} />
+        {/* Notion Page Icon Overlap */}
+        <div className="px-6 sm:px-12 relative flex flex-col sm:flex-row sm:items-end justify-between -mt-16 sm:-mt-20 mb-6">
+          <div className="relative flex-shrink-0 z-20">
+            {/* Profile photo in Neo-Brutalist Frame */}
+            <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-2xl bg-[var(--theme-bg-card)] border-2.5 border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)] overflow-hidden p-1 flex items-center justify-center hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--theme-border)] transition-all duration-250">
+              <img 
+                src={avatarUrl} 
+                alt={name} 
+                className="w-full h-full rounded-xl object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = "https://ui-avatars.com/api/?name=Naufal+Nazhif&background=bae6fd&color=0369a1&size=128";
+                }}
+              />
+            </div>
+          </div>
+
+          {/* Saturated Option tags */}
+          <div className="flex flex-wrap gap-2 mt-4 sm:mt-0 font-heading">
+            {roles.map((role: string, idx: number) => {
+              const tagsColors = [
+                "bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)]",
+                "bg-[var(--tag-purple-bg)] text-[var(--tag-purple-text)]",
+                "bg-[var(--tag-yellow-bg)] text-[var(--tag-yellow-text)]"
+              ];
+              const colorClass = tagsColors[idx % tagsColors.length];
+              
+              return (
+                <span 
+                  key={idx} 
+                  className={`notion-tag ${colorClass}`}
+                >
+                  {role}
+                </span>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Details & Body */}
+        <div className="px-6 sm:px-12 pb-12 pt-2">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {/* Breadcrumb info with clean mini icons */}
+            <div className="text-xs font-mono font-bold text-[var(--theme-text-muted)] mb-5 flex flex-wrap items-center gap-x-4 gap-y-2">
+              <span className="flex items-center gap-1.5">
+                <FiCalendar className="text-[var(--theme-text-primary)]" />
+                Last edited: {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+              </span>
+              <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700">|</span>
+              <span className="flex items-center gap-1.5">
+                <FiUser className="text-[var(--theme-text-primary)]" />
+                Author: Naufal
+              </span>
+            </div>
+
+            {/* Document Header Title */}
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight text-[var(--theme-text-primary)] mb-6 leading-tight">
+              {name}
+            </h1>
+
+            {/* Notion Callout block with Orange highlight */}
+            <div className="notion-callout mb-8">
+              <div className="p-2 bg-[var(--tag-orange-bg)] text-[var(--tag-orange-text)] border border-[var(--theme-border)] shadow-[1px_1px_0px_0px_var(--theme-border)] rounded-md notion-callout-icon">
+                <FiZap size={18} />
+              </div>
+              <div>
+                <h4 className="font-heading font-extrabold text-sm text-[var(--theme-text-primary)] mb-1">About Me</h4>
+                <p className="text-sm sm:text-base text-[var(--theme-text-secondary)] leading-relaxed font-medium">
+                  {tagline}
+                </p>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex flex-wrap items-center gap-4">
+              <a href="#projects" className="neo-brutal-btn bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)]">
+                <span>View Projects</span>
+                <FiArrowRight size={16} />
               </a>
               
               {resumeUrl && resumeUrl !== "#" && (
@@ -63,51 +138,28 @@ export default function Hero() {
                   href={resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-6 py-3 font-bold flex items-center gap-2 text-[var(--theme-text-primary)] border-b-4 border-[var(--theme-border)] hover:bg-[var(--neo-yellow)] hover:border-[var(--theme-border)] transition-colors rounded-lg"
+                  className="neo-brutal-btn bg-[var(--tag-purple-bg)] text-[var(--tag-purple-text)]"
                 >
-                  <FiDownload size={20} />
-                  Download CV
+                  <FiDownload size={16} />
+                  <span>Download CV</span>
                 </a>
               )}
             </div>
           </motion.div>
         </div>
-
-        {/* Right Column: Profile Image */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-[450px] lg:h-[450px] flex-shrink-0"
-        >
-          {/* Neobrutalist Image Container */}
-          <div className="absolute inset-0 bg-[var(--neo-pink)] border-4 border-[var(--theme-border)] shadow-[8px_8px_0px_0px_var(--theme-border)] rounded-[2rem] overflow-hidden group transform rotate-3 hover:rotate-0 transition-transform duration-300">
-            <img 
-              src={avatarUrl} 
-              alt={name} 
-              className="w-full h-full object-cover grayscale mix-blend-multiply group-hover:grayscale-0 group-hover:mix-blend-normal transition-all duration-500"
-              onError={(e) => {
-                e.currentTarget.src = "https://ui-avatars.com/api/?name=Naufal+Nazhif&background=random&size=512";
-              }}
-            />
-          </div>
-        </motion.div>
       </div>
 
-      {/* Scroll Down Indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:block"
-      >
-        <motion.div
+      {/* Down arrow scroll helper */}
+      <div className="flex justify-center mt-8">
+        <motion.a
+          href="#about"
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="p-3 rounded-xl border-2 border-[var(--theme-border)] bg-[var(--theme-bg-card)] shadow-[3px_3px_0px_0px_var(--theme-border)] text-[var(--theme-text-secondary)] hover:text-black hover:bg-[var(--tag-yellow-bg)] transition-colors cursor-pointer"
         >
-          <HiArrowDown className="text-[#1A1A1A]" size={24} />
-        </motion.div>
-      </motion.div>
+          <ArrowDownIcon size={18} />
+        </motion.a>
+      </div>
     </section>
   );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
-import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
+import { FiEdit2, FiTrash2, FiPlus, FiFolder, FiUpload, FiExternalLink, FiGithub, FiFileText, FiBookmark } from "react-icons/fi";
 import DeleteModal from "./DeleteModal";
 import ImageCropperModal from "./ImageCropperModal";
 
@@ -120,7 +120,7 @@ export default function ProjectsManager() {
     fetchProjects();
   };
 
-  if (loading && projects.length === 0) return <div className="animate-pulse">Loading projects data...</div>;
+  if (loading && projects.length === 0) return <div className="animate-pulse font-mono text-xs text-[var(--theme-text-muted)]">Loading projects data...</div>;
 
   return (
     <div>
@@ -131,85 +131,140 @@ export default function ProjectsManager() {
         itemName={deleteModal.name}
       />
 
-      <div className="mb-8 flex items-center justify-between border-b-[3px] border-[var(--theme-border)] pb-4">
-        <h3 className="text-3xl font-black heading-neo uppercase">Projects</h3>
+      <div className="mb-6 flex items-center justify-between border-b-2 border-[var(--theme-border)] pb-4">
+        <h3 className="text-base font-heading font-extrabold text-[var(--theme-text-primary)] flex items-center gap-2">
+          <div className="p-1 rounded bg-[var(--tag-orange-bg)] border border-black shadow-[1px_1px_0px_0px_black] text-[var(--tag-orange-text)] flex items-center justify-center">
+            <FiFolder size={14} />
+          </div>
+          <span>Projects Database</span>
+        </h3>
         {editingId && (
           <button 
             onClick={() => {
               setEditingId(null);
               setFormData({ title: "", description: "", image_url: "", live_url: "", github_url: "", tech_stack: "" });
             }}
-            className="text-sm font-bold border-2 border-[var(--theme-border)] px-4 py-2 bg-[var(--theme-bg-card)] shadow-[2px_2px_0px_0px_var(--theme-border)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"
+            className="neo-brutal-btn bg-white hover:bg-[var(--tag-gray-bg)] text-xs py-1.5"
           >
             Cancel Edit
           </button>
         )}
       </div>
 
-      <form onSubmit={handleSubmit} className="mb-12 bg-[var(--neo-purple)] p-6 border-[3px] border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)]">
-        <h4 className="text-xl font-black mb-4 uppercase">{editingId ? "Edit Project" : "Add New Project"}</h4>
+      {/* Editor Form Card */}
+      <form onSubmit={handleSubmit} className="mb-8 bg-[var(--tag-gray-bg)]/20 p-6 border-2 border-[var(--theme-border)] rounded-2xl shadow-[3px_3px_0px_0px_var(--theme-border)]">
+        <h4 className="text-xs font-mono font-bold mb-4 uppercase text-[var(--theme-text-primary)]">
+          {editingId ? "📝 Edit Project Record" : "➕ Add New Project Record"}
+        </h4>
+        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-sm font-black mb-1 uppercase">Title</label>
-            <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required className="w-full border-[3px] border-[var(--theme-border)] px-3 py-2 font-medium focus:outline-none" />
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">Title</label>
+            <input type="text" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required className="notion-input" />
           </div>
           <div>
-            <label className="block text-sm font-black mb-1 uppercase">Tech Stack (Comma Separated)</label>
-            <input type="text" value={formData.tech_stack} onChange={e => setFormData({...formData, tech_stack: e.target.value})} required placeholder="React, Node.js, Tailwind" className="w-full border-[3px] border-[var(--theme-border)] px-3 py-2 font-medium focus:outline-none" />
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">Tech Stack (Comma Separated)</label>
+            <input type="text" value={formData.tech_stack} onChange={e => setFormData({...formData, tech_stack: e.target.value})} required placeholder="React, Node.js, Tailwind" className="notion-input" />
           </div>
           <div className="md:col-span-2">
-            <label className="block text-sm font-black mb-1 uppercase">Description</label>
-            <textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required rows={3} className="w-full border-[3px] border-[var(--theme-border)] px-3 py-2 font-medium focus:outline-none" />
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">Description</label>
+            <textarea value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} required rows={3} className="notion-input" />
           </div>
           <div>
-            <label className="block text-sm font-black mb-1 uppercase">Image URL / Upload</label>
-            <div className="flex flex-col gap-2">
-              <input type="text" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} placeholder="Or paste URL here..." className="w-full border-[3px] border-[var(--theme-border)] px-3 py-2 font-medium focus:outline-none bg-white" />
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">Image URL / Upload</label>
+            <div className="flex flex-col gap-3">
+              <input type="text" value={formData.image_url} onChange={e => setFormData({...formData, image_url: e.target.value})} placeholder="Or paste URL here..." className="notion-input" />
               <div className="relative">
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   disabled={uploadingImage}
                 />
-                <div className={`w-full bg-[var(--neo-cyan)] text-[#1A1A1A] font-bold border-[3px] border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)] px-3 py-2 text-center uppercase ${uploadingImage ? 'opacity-50' : 'hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all'}`}>
-                  {uploadingImage ? "Uploading..." : "Upload Image"}
+                <div className="neo-brutal-btn w-full py-2 bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)] flex items-center justify-center gap-1.5">
+                  <FiUpload size={14} />
+                  <span>{uploadingImage ? "Uploading cover..." : "Upload Cover Image"}</span>
                 </div>
               </div>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-black mb-1 uppercase">Live URL</label>
-            <input type="text" value={formData.live_url} onChange={e => setFormData({...formData, live_url: e.target.value})} className="w-full border-[3px] border-[var(--theme-border)] px-3 py-2 font-medium focus:outline-none" />
-          </div>
-          <div>
-            <label className="block text-sm font-black mb-1 uppercase">GitHub URL</label>
-            <input type="text" value={formData.github_url} onChange={e => setFormData({...formData, github_url: e.target.value})} className="w-full border-[3px] border-[var(--theme-border)] px-3 py-2 font-medium focus:outline-none" />
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">Live URL</label>
+            <input type="text" value={formData.live_url} onChange={e => setFormData({...formData, live_url: e.target.value})} className="notion-input" />
+            
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mt-3.5 mb-1.5 uppercase">GitHub URL</label>
+            <input type="text" value={formData.github_url} onChange={e => setFormData({...formData, github_url: e.target.value})} className="notion-input" />
           </div>
         </div>
         
-        <button type="submit" className="mt-4 bg-[var(--neo-yellow)] font-black uppercase px-6 py-2 border-[3px] border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all flex items-center gap-2">
-          {editingId ? "Update Data" : <><FiPlus size={18}/> Add Data</>}
+        <button type="submit" className="neo-brutal-btn bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)]">
+          {editingId ? "Update Data" : <><FiPlus size={14}/> Add Project</>}
         </button>
       </form>
 
+      {/* Database Listing cards */}
       <div className="space-y-4">
-        {projects.map(proj => (
-          <div key={proj.id} className="border-[3px] border-[var(--theme-border)] p-4 flex flex-col md:flex-row justify-between items-start bg-[var(--theme-bg-card)] gap-4">
-            {proj.image_url && <img src={proj.image_url} alt={proj.title} className="w-24 h-24 object-cover border-[3px] border-[var(--theme-border)] shadow-[2px_2px_0px_0px_var(--theme-border)] flex-shrink-0" />}
-            <div className="flex-1">
-              <h5 className="font-black text-lg">{proj.title}</h5>
-              <p className="text-sm font-bold text-[var(--neo-cyan)] mb-2">{proj.tech_stack && proj.tech_stack.join(" • ")}</p>
-              <p className="text-sm font-medium line-clamp-2 mb-2">{proj.description}</p>
-              <div className="flex gap-4 text-xs font-bold text-gray-500">
-                {proj.live_url && <a href={proj.live_url} target="_blank" rel="noreferrer" className="underline">Live Demo</a>}
-                {proj.github_url && <a href={proj.github_url} target="_blank" rel="noreferrer" className="underline">GitHub</a>}
+        {projects.map((proj, idx) => (
+          <div key={proj.id || idx} className="border-2.5 border-[var(--theme-border)] p-5 flex flex-col md:flex-row justify-between items-start bg-[var(--theme-bg-card)] gap-5 rounded-2xl shadow-[4px_4px_0px_0px_var(--theme-border)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5px_5px_0px_0px_var(--theme-border)] transition-all duration-200">
+            {proj.image_url && (
+              <img 
+                src={proj.image_url} 
+                alt={proj.title} 
+                className="w-24 h-24 md:w-28 md:h-20 object-cover border-2 border-black rounded-xl flex-shrink-0 shadow-[2px_2px_0px_0px_black]" 
+              />
+            )}
+            
+            <div className="flex-grow space-y-2.5 min-w-0 mr-4">
+              <h5 className="font-heading font-extrabold text-base text-[var(--theme-text-primary)] flex items-center gap-2">
+                <FiFileText className="text-[var(--notion-blue)] flex-shrink-0" />
+                <span>{proj.title}</span>
+              </h5>
+              
+              <div className="flex flex-wrap gap-2">
+                {proj.tech_stack && proj.tech_stack.map((tech: string, tIdx: number) => (
+                  <span key={tech + tIdx} className="notion-tag bg-[var(--tag-gray-bg)] text-[var(--tag-gray-text)] text-[9px]">
+                    <FiBookmark size={8} />
+                    {tech}
+                  </span>
+                ))}
+              </div>
+              
+              <p className="text-xs sm:text-sm font-sans font-medium text-[var(--theme-text-secondary)] line-clamp-2 leading-relaxed">
+                {proj.description}
+              </p>
+              
+              <div className="flex gap-4 text-[10px] font-mono font-bold text-[var(--theme-text-muted)] pt-0.5">
+                {proj.live_url && proj.live_url !== "#" && (
+                  <a href={proj.live_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-[var(--notion-blue)] hover:underline">
+                    <FiExternalLink size={10} />
+                    <span>Live Demo</span>
+                  </a>
+                )}
+                {proj.github_url && proj.github_url !== "#" && (
+                  <a href={proj.github_url} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-[var(--notion-blue)] hover:underline">
+                    <FiGithub size={10} />
+                    <span>GitHub</span>
+                  </a>
+                )}
               </div>
             </div>
-            <div className="flex gap-2 flex-shrink-0">
-              <button onClick={() => handleEdit(proj)} className="p-2 bg-[var(--neo-green)] border-2 border-[var(--theme-border)] shadow-[2px_2px_0px_0px_var(--theme-border)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"><FiEdit2 size={16}/></button>
-              <button onClick={() => confirmDelete(proj)} className="p-2 bg-[var(--neo-pink)] border-2 border-[var(--theme-border)] shadow-[2px_2px_0px_0px_var(--theme-border)] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all"><FiTrash2 size={16}/></button>
+            
+            <div className="flex gap-2 flex-shrink-0 self-center">
+              <button 
+                onClick={() => handleEdit(proj)} 
+                className="p-2 border-2 border-black rounded-xl bg-[var(--tag-gray-bg)] text-[var(--theme-text-primary)] shadow-[2px_2px_0px_0px_var(--theme-border)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2.5px_2.5px_0px_0px_var(--theme-border)] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                aria-label="Edit"
+              >
+                <FiEdit2 size={13} />
+              </button>
+              <button 
+                onClick={() => confirmDelete(proj)} 
+                className="p-2 border-2 border-black rounded-xl bg-[var(--tag-pink-bg)] text-[var(--tag-pink-text)] shadow-[2px_2px_0px_0px_var(--theme-border)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[2.5px_2.5px_0px_0px_var(--theme-border)] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                aria-label="Delete"
+              >
+                <FiTrash2 size={13} />
+              </button>
             </div>
           </div>
         ))}

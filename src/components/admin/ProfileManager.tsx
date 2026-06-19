@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 import ImageCropperModal from "./ImageCropperModal";
+import { FiSave, FiUpload, FiAlertCircle, FiCheckCircle } from "react-icons/fi";
 
 export default function ProfileManager() {
   const [loading, setLoading] = useState(true);
@@ -51,7 +52,6 @@ export default function ProfileManager() {
         setCropper({ isOpen: true, imageSrc: reader.result?.toString() || null });
       });
       reader.readAsDataURL(file);
-      // Reset input so the same file can be selected again
       e.target.value = '';
     }
   };
@@ -74,7 +74,7 @@ export default function ProfileManager() {
       const { data } = supabase.storage.from('portfolio-assets').getPublicUrl(filePath);
       
       setFormData(prev => ({ ...prev, avatar_url: data.publicUrl }));
-      setMessage({ type: "success", text: "Profile picture uploaded! Don't forget to click 'Save Profile'." });
+      setMessage({ type: "success", text: "Profile picture uploaded! Don't forget to click 'Save Changes'." });
     } catch (error: any) {
       setMessage({ type: "error", text: `Upload failed: ${error.message}` });
     } finally {
@@ -99,10 +99,8 @@ export default function ProfileManager() {
 
     let result;
     if (formData.id) {
-      // Update existing
       result = await supabase.from("profiles").update(formattedData).eq("id", formData.id);
     } else {
-      // Insert new if doesn't exist
       result = await supabase.from("profiles").insert([formattedData]);
     }
 
@@ -115,118 +113,139 @@ export default function ProfileManager() {
     setSaving(false);
   };
 
-  if (loading) return <div className="animate-pulse">Loading profile data...</div>;
+  if (loading) return <div className="animate-pulse font-mono text-xs text-[var(--theme-text-muted)]">Loading profile data...</div>;
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h3 className="text-3xl font-black heading-neo uppercase">Profile Settings</h3>
-      </div>
-
       {message && (
-        <div className={`p-4 mb-6 border-[3px] font-bold ${message.type === 'success' ? 'bg-[var(--neo-green)] border-[var(--theme-border)] text-[#1A1A1A] shadow-[4px_4px_0px_0px_var(--theme-border)]' : 'bg-red-200 border-red-500 text-red-700 shadow-[4px_4px_0px_0px_#EF4444]'}`}>
-          {message.text}
+        <div className={`p-4 mb-6 border-2 border-black rounded-xl text-xs sm:text-sm font-heading font-extrabold shadow-[3px_3px_0px_0px_var(--theme-border)] flex items-center gap-2 ${
+          message.type === 'success' 
+            ? 'bg-[var(--tag-green-bg)] text-[var(--tag-green-text)]' 
+            : 'bg-[var(--tag-red-bg)] text-[var(--tag-red-text)]'
+        }`}>
+          {message.type === 'success' ? <FiCheckCircle size={16} /> : <FiAlertCircle size={16} />}
+          <span>{message.text}</span>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-black text-[#1A1A1A] mb-2 uppercase">Full Name</label>
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">
+              Full Name
+            </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              className="w-full bg-[var(--theme-bg)] border-[3px] border-[var(--theme-border)] px-4 py-3 text-[#1A1A1A] focus:outline-none focus:translate-x-1 focus:-translate-y-1 focus:shadow-[4px_4px_0px_0px_var(--theme-border)] transition-all font-medium"
+              className="notion-input"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-black text-[#1A1A1A] mb-2 uppercase">Roles (Comma Separated)</label>
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">
+              Roles (Comma Separated)
+            </label>
             <input
               type="text"
               value={formData.roles}
               onChange={(e) => setFormData({ ...formData, roles: e.target.value })}
-              placeholder="e.g. IT Professional, Software Engineer"
-              className="w-full bg-[var(--theme-bg)] border-[3px] border-[var(--theme-border)] px-4 py-3 text-[#1A1A1A] focus:outline-none focus:translate-x-1 focus:-translate-y-1 focus:shadow-[4px_4px_0px_0px_var(--theme-border)] transition-all font-medium"
+              placeholder="IT Professional, Software Engineer"
+              className="notion-input"
               required
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-black text-[#1A1A1A] mb-2 uppercase">Hero Tagline</label>
+          <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">
+            Hero Tagline
+          </label>
           <textarea
             value={formData.tagline}
             onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
             rows={2}
-            className="w-full bg-[var(--theme-bg)] border-[3px] border-[var(--theme-border)] px-4 py-3 text-[#1A1A1A] focus:outline-none focus:translate-x-1 focus:-translate-y-1 focus:shadow-[4px_4px_0px_0px_var(--theme-border)] transition-all font-medium"
+            className="notion-input"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-black text-[#1A1A1A] mb-2 uppercase">About Me (Separate paragraphs with double enter)</label>
+          <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">
+            About Paragraphs (Separate with double enter)
+          </label>
           <textarea
             value={formData.about_paragraphs}
             onChange={(e) => setFormData({ ...formData, about_paragraphs: e.target.value })}
-            rows={6}
-            className="w-full bg-[var(--theme-bg)] border-[3px] border-[var(--theme-border)] px-4 py-3 text-[#1A1A1A] focus:outline-none focus:translate-x-1 focus:-translate-y-1 focus:shadow-[4px_4px_0px_0px_var(--theme-border)] transition-all font-medium"
+            rows={5}
+            className="notion-input"
             required
           />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           <div>
-            <label className="block text-sm font-black text-[#1A1A1A] mb-2 uppercase">Profile Picture URL / Upload</label>
-            <div className="flex flex-col gap-2">
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">
+              Profile Picture URL / Upload
+            </label>
+            <div className="flex flex-col gap-3">
               <input
                 type="text"
                 value={formData.avatar_url}
                 onChange={(e) => setFormData({ ...formData, avatar_url: e.target.value })}
                 placeholder="Or paste URL here..."
-                className="w-full bg-[var(--theme-bg)] border-[3px] border-[var(--theme-border)] px-4 py-3 text-[#1A1A1A] focus:outline-none focus:translate-x-1 focus:-translate-y-1 focus:shadow-[4px_4px_0px_0px_var(--theme-border)] transition-all font-medium"
+                className="notion-input"
               />
               <div className="relative">
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleFileChange}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                   disabled={uploadingAvatar}
                 />
-                <div className={`w-full bg-[var(--neo-purple)] text-white font-bold border-[3px] border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)] px-4 py-3 text-center uppercase ${uploadingAvatar ? 'opacity-50' : 'hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all'}`}>
-                  {uploadingAvatar ? "Uploading..." : "Upload Local Image"}
+                <div className="neo-brutal-btn w-full py-2 bg-[var(--tag-purple-bg)] text-[var(--tag-purple-text)] flex items-center justify-center gap-1.5">
+                  <FiUpload size={14} />
+                  <span>{uploadingAvatar ? "Uploading file..." : "Upload Local File"}</span>
                 </div>
               </div>
             </div>
           </div>
           <div>
-            <label className="block text-sm font-black text-[#1A1A1A] mb-2 uppercase">Resume / CV URL</label>
+            <label className="block text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-1.5 uppercase">
+              Resume / CV URL
+            </label>
             <input
               type="text"
               value={formData.resume_url}
               onChange={(e) => setFormData({ ...formData, resume_url: e.target.value })}
-              placeholder="e.g. /resume.pdf or https://drive.google.com/..."
-              className="w-full bg-[var(--theme-bg)] border-[3px] border-[var(--theme-border)] px-4 py-3 text-[#1A1A1A] focus:outline-none focus:translate-x-1 focus:-translate-y-1 focus:shadow-[4px_4px_0px_0px_var(--theme-border)] transition-all font-medium"
+              placeholder="/resume.pdf or drive link..."
+              className="notion-input"
             />
           </div>
         </div>
 
         {formData.avatar_url && (
-          <div className="mt-4">
-            <p className="text-sm font-black text-[#1A1A1A] mb-2 uppercase">Avatar Preview:</p>
-            <img src={formData.avatar_url} alt="Profile Preview" className="w-24 h-24 object-cover border-[3px] border-[var(--theme-border)] shadow-[2px_2px_0px_0px_var(--theme-border)]" />
+          <div className="mt-3 p-4 border-2 border-dashed border-[var(--theme-border)] rounded-2xl w-fit bg-[var(--theme-bg)] shadow-[2.5px_2.5px_0px_0px_var(--theme-border)]">
+            <p className="text-xs font-mono font-bold text-[var(--theme-text-secondary)] mb-2 uppercase">
+              Avatar Preview:
+            </p>
+            <img 
+              src={formData.avatar_url} 
+              alt="Profile Preview" 
+              className="w-20 h-20 object-cover border-2 border-[var(--theme-border)] rounded-full shadow-[2px_2px_0px_0px_black]" 
+            />
           </div>
         )}
 
-        <div className="pt-4">
+        <div className="pt-4 border-t-2 border-[var(--theme-border)]">
           <button
             type="submit"
             disabled={saving}
-            className="bg-[var(--neo-yellow)] text-[#1A1A1A] font-black uppercase tracking-widest px-8 py-3 border-[3px] border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all disabled:opacity-50"
+            className="neo-brutal-btn bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)] w-full sm:w-auto"
           >
-            {saving ? "Saving..." : "Save Profile"}
+            <FiSave size={14} />
+            <span>{saving ? "Saving Changes..." : "Save Changes"}</span>
           </button>
         </div>
       </form>

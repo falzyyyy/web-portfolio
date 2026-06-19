@@ -7,31 +7,40 @@ export default function Footer() {
   const { ref, controls, variants } = useScrollReveal();
 
   return (
-    <footer id="contact" className="py-20 px-6 border-t-[4px] border-[var(--theme-border)] bg-[var(--neo-cyan)] mt-24">
+    <footer id="contact" className="py-16 px-4 sm:px-6 bg-[var(--theme-bg)]">
       <div className="max-w-4xl mx-auto">
-        <motion.div ref={ref} initial="hidden" animate={controls} variants={variants} className="text-center neo-card p-12 bg-[var(--theme-bg-card)]">
-          <motion.div className="flex items-center gap-4 justify-center mb-10">
-            <span className="text-xl font-black heading-neo text-[var(--theme-text-primary)]">07</span>
-            <div className="h-[4px] w-16 bg-[var(--theme-border)]" />
-            <h2 className="text-xl font-black heading-neo text-[var(--theme-text-primary)]">Contact</h2>
+        <motion.div 
+          ref={ref} 
+          initial="hidden" 
+          animate={controls} 
+          variants={variants} 
+          className="text-center border-2.5 border-[var(--theme-border)] p-8 sm:p-12 bg-[var(--theme-bg-card)] rounded-2xl shadow-[4px_4px_0px_0px_var(--theme-border)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[5.5px_5.5px_0px_0px_var(--theme-border)] transition-all duration-200"
+        >
+          {/* Section label */}
+          <motion.div className="flex items-center gap-2 justify-center mb-8 font-mono text-sm">
+            <span className="font-bold text-[var(--theme-text-muted)] text-base">07.</span>
+            <span className="text-[var(--theme-text-muted)]">workspace</span>
+            <span className="text-[var(--theme-text-muted)]">/</span>
+            <div className="p-1 rounded bg-[var(--tag-yellow-bg)] border border-[var(--theme-border)] shadow-[1px_1px_0px_0px_var(--theme-border)] flex items-center justify-center text-[var(--tag-yellow-text)]">
+              <FiMail size={14} />
+            </div>
+            <h2 className="font-heading font-extrabold text-[var(--theme-text-primary)]">Contact</h2>
           </motion.div>
 
-          <h3 className="text-4xl sm:text-5xl font-black text-[#1A1A1A] mb-6 uppercase tracking-tighter">
-            Let&apos;s Work Together
+          <h3 className="text-3xl sm:text-5xl font-heading font-extrabold text-[var(--theme-text-primary)] mb-4 tracking-tight">
+            Let&apos;s Connect!
           </h3>
-          <p className="text-[#1A1A1A] font-bold text-lg mb-10 max-w-md mx-auto">
-            Tertarik untuk berkolaborasi atau punya pertanyaan? Jangan ragu untuk menghubungi saya.
+          <p className="text-[var(--theme-text-secondary)] text-sm sm:text-base mb-8 max-w-md mx-auto font-sans font-semibold">
+            Interested in collaboration or have any questions? Feel free to reach out to me through the channels below.
           </p>
 
-          <div className="flex items-center justify-center gap-6 mb-16">
-            {socialLinks.map((link, idx) => {
+          {/* Social connections property list */}
+          <div className="flex items-center justify-center gap-4 mb-10">
+            {socialLinks.map((link) => {
               let Icon = link.icon;
               if (link.label === "LinkedIn") Icon = FiLinkedin;
               if (link.label === "Email") Icon = FiMail;
               if (link.label === "GitHub") Icon = FiGithub;
-              
-              const colors = ["var(--neo-yellow)", "var(--neo-pink)", "var(--neo-purple)"];
-              const bgColor = colors[idx % colors.length];
               
               return (
                 <a
@@ -39,22 +48,22 @@ export default function Footer() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-16 h-16 border-4 border-[var(--theme-border)] flex items-center justify-center text-[#1A1A1A] hover:scale-110 transition-transform duration-300 shadow-[4px_4px_0px_0px_var(--theme-border)] hover:translate-y-[-4px]"
-                  style={{ backgroundColor: bgColor, borderRadius: idx % 2 === 0 ? '16px' : '50%' }}
+                  className="w-12 h-12 border-2 border-black rounded-xl flex items-center justify-center bg-[var(--tag-gray-bg)] text-[var(--theme-text-primary)] hover:bg-[var(--tag-yellow-bg)] shadow-[3px_3px_0px_0px_var(--theme-border)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4.5px_4.5px_0px_0px_var(--theme-border)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-[1px_1px_0px_0px_var(--theme-border)] transition-all duration-150"
                   aria-label={link.label}
                   id={`footer-${link.label.toLowerCase()}`}
                 >
-                  <Icon size={28} />
+                  <Icon size={20} />
                 </a>
               );
             })}
           </div>
 
-          <div className="pt-8 border-t-[4px] border-[var(--theme-border)]">
-            <p className="text-sm font-bold text-[#1A1A1A] flex items-center justify-center gap-2">
-              © 2026 Naufal Nazhif. Built with
-              <FiHeart size={16} className="text-[var(--neo-pink)] fill-[var(--neo-pink)]" />
-              using React.
+          {/* Bottom attribution */}
+          <div className="pt-6 border-t-2 border-[var(--theme-border)] font-mono">
+            <p className="text-xs text-[var(--theme-text-secondary)] flex items-center justify-center gap-2 font-bold">
+              <span>© 2026 Naufal Nazhif. Built with</span>
+              <FiHeart size={14} className="text-red-500 fill-red-500 animate-pulse" />
+              <span>using React & Tailwind.</span>
             </p>
           </div>
         </motion.div>

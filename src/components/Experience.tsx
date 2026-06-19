@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useScrollReveal, staggerContainer, staggerItem } from "../hooks/useScrollReveal";
 import { supabase } from "../lib/supabase";
+import { FiBriefcase, FiCalendar, FiAward, FiLayers } from "react-icons/fi";
 
 export default function Experience() {
   const { ref, controls } = useScrollReveal();
@@ -16,69 +17,81 @@ export default function Experience() {
   }, []);
 
   return (
-    <section id="experience" className="py-12 sm:py-16 px-6">
-      <div className="max-w-4xl mx-auto">
+    <section id="experience" className="py-16 px-4 sm:px-6 bg-[var(--theme-bg)]">
+      <div className="max-w-5xl mx-auto">
         <motion.div ref={ref} initial="hidden" animate={controls}>
           {/* Section label */}
-          <motion.div variants={staggerItem} className="flex items-center gap-4 mb-16">
-            <span className="text-xl font-black heading-neo text-[var(--theme-text-primary)]">
-              02
-            </span>
-            <div className="h-[4px] w-16 bg-[var(--theme-border)]" />
-            <h2 className="text-xl font-black heading-neo text-[var(--theme-text-primary)]">
-              Experience
-            </h2>
+          <motion.div variants={staggerItem} className="flex items-center gap-2 mb-8 font-mono text-sm">
+            <span className="font-bold text-[var(--theme-text-muted)] text-base">02.</span>
+            <span className="text-[var(--theme-text-muted)]">workspace</span>
+            <span className="text-[var(--theme-text-muted)]">/</span>
+            <div className="p-1 rounded bg-[var(--tag-blue-bg)] border border-[var(--theme-border)] shadow-[1px_1px_0px_0px_var(--theme-border)] flex items-center justify-center text-[var(--tag-blue-text)]">
+              <FiBriefcase size={14} />
+            </div>
+            <h2 className="font-heading font-extrabold text-[var(--theme-text-primary)]">Work & Org Experience</h2>
           </motion.div>
 
-          {/* Timeline */}
+          {/* Timeline list */}
           <motion.div
             variants={staggerContainer}
             initial="hidden"
             animate={controls}
-            className="relative"
+            className="relative pl-8 border-l-2.5 border-[var(--theme-border)] ml-3 sm:ml-4 space-y-8"
           >
-            {/* Vertical line */}
-            <div className="absolute left-[7px] md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-[4px] bg-[var(--theme-border)]" />
+            {experiences.map((exp, i) => {
+              const tagColors = [
+                "bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)]",
+                "bg-[var(--tag-yellow-bg)] text-[var(--tag-yellow-text)]",
+                "bg-[var(--tag-pink-bg)] text-[var(--tag-pink-text)]",
+                "bg-[var(--tag-green-bg)] text-[var(--tag-green-text)]",
+                "bg-[var(--tag-purple-bg)] text-[var(--tag-purple-text)]"
+              ];
+              const tagColorClass = tagColors[i % tagColors.length];
 
-            {experiences.map((exp, i) => (
-              <motion.div
-                key={exp.id || i}
-                variants={staggerItem}
-                className={`relative flex flex-col md:flex-row mb-12 last:mb-0 ${
-                  i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                }`}
-              >
-                {/* Dot */}
-                <div className="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-4 z-10">
-                  <div className="w-5 h-5 rounded-full border-4 border-[var(--theme-border)] bg-[var(--neo-yellow)] flex items-center justify-center" />
-                </div>
-
-                {/* Content */}
-                <div
-                  className={`ml-8 md:ml-0 md:w-1/2 ${
-                    i % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12 md:text-left"
-                  }`}
+              return (
+                <motion.div
+                  key={exp.id || i}
+                  variants={staggerItem}
+                  className="relative group"
                 >
-                  <div className="neo-card p-6 transition-all duration-300">
-                    <span className="inline-block text-xs font-black text-[#1A1A1A] uppercase mb-3 px-3 py-1 border-2 border-[var(--theme-border)] bg-[var(--neo-pink)] shadow-[2px_2px_0px_0px_var(--theme-border)]">
-                      {exp.year}
-                    </span>
-                    <h3 className="text-xl font-black text-[#1A1A1A] mb-1">
-                      {exp.title}
+                  {/* Timeline bullet node */}
+                  <div className="absolute -left-[43px] top-2 z-10 w-5 h-5 rounded-md border-2 border-[var(--theme-border)] bg-[var(--theme-bg-card)] flex items-center justify-center shadow-[1.5px_1.5px_0px_0px_var(--theme-border)] group-hover:bg-[var(--tag-yellow-bg)] group-hover:-translate-y-0.5 transition-all">
+                    <FiCalendar size={10} className="text-[var(--theme-text-primary)]" />
+                  </div>
+
+                  {/* Document style card */}
+                  <div className="border-2.5 border-[var(--theme-border)] rounded-2xl p-6 bg-[var(--theme-bg-card)] max-w-4xl shadow-[4px_4px_0px_0px_var(--theme-border)] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--theme-border)] transition-all duration-200">
+                    <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
+                      <span className={`notion-tag ${tagColorClass}`}>
+                        <FiCalendar size={12} />
+                        {exp.year}
+                      </span>
+                      <span className="text-xs font-mono font-bold text-[var(--theme-text-muted)] bg-[var(--tag-gray-bg)] border border-[var(--theme-border)] px-2 py-0.5 rounded shadow-[1.5px_1.5px_0px_0px_var(--theme-border)]">
+                        ID: {exp.order_index || i}
+                      </span>
+                    </div>
+
+                    <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-[var(--theme-text-primary)] mb-2 flex items-center gap-2">
+                      <FiAward className="text-[var(--notion-blue)] flex-shrink-0" />
+                      <span>{exp.title}</span>
                     </h3>
-                    <p className="text-sm font-bold text-[var(--theme-text-secondary)] mb-3">
-                      {exp.organization}
-                    </p>
-                    <p className="text-sm text-[var(--theme-text-secondary)] font-medium leading-relaxed">
+
+                    <h4 className="text-sm font-heading font-bold text-[var(--theme-text-secondary)] mb-4 flex items-center gap-2">
+                      <div className="p-1 rounded bg-[var(--tag-gray-bg)] border border-[var(--theme-border)] shadow-[1px_1px_0px_0px_var(--theme-border)] flex items-center justify-center text-[var(--theme-text-secondary)]">
+                        <FiLayers size={12} />
+                      </div>
+                      <span>{exp.organization}</span>
+                    </h4>
+
+                    <div className="h-[2px] bg-[var(--theme-border)] my-4" />
+
+                    <p className="text-sm sm:text-base font-sans font-medium text-[var(--theme-text-secondary)] leading-relaxed">
                       {exp.description}
                     </p>
                   </div>
-                </div>
-
-                {/* Spacer for the other side */}
-                <div className="hidden md:block md:w-1/2" />
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </motion.div>
         </motion.div>
       </div>
