@@ -25,7 +25,7 @@ export default function BentoSection() {
     "naufal-workspace login: success",
     "Type 'help' to see list of available commands."
   ]);
-  const terminalBottomRef = useRef<HTMLDivElement>(null);
+  const terminalBodyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchProfileAndEducation = async () => {
@@ -39,7 +39,9 @@ export default function BentoSection() {
   }, []);
 
   useEffect(() => {
-    terminalBottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (terminalBodyRef.current) {
+      terminalBodyRef.current.scrollTop = terminalBodyRef.current.scrollHeight;
+    }
   }, [terminalHistory]);
 
   const handleTerminalSubmit = (e: React.FormEvent) => {
@@ -275,7 +277,7 @@ export default function BentoSection() {
                 </div>
               </div>
 
-              <div className="text-xs space-y-1.5 h-[120px] overflow-y-auto custom-scrollbar">
+              <div ref={terminalBodyRef} className="text-xs space-y-1.5 h-[120px] overflow-y-auto custom-scrollbar">
                 {terminalHistory.map((line, i) => (
                   <div key={i} className={cn(
                     "leading-relaxed",
@@ -284,7 +286,6 @@ export default function BentoSection() {
                     {line}
                   </div>
                 ))}
-                <div ref={terminalBottomRef} />
               </div>
             </div>
 
