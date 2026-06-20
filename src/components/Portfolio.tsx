@@ -1,9 +1,7 @@
 import Navbar from "./Navbar";
 import Hero from "./Hero";
-import About from "./About";
+import BentoSection from "./BentoSection";
 import Experience from "./Experience";
-import Education from "./Education";
-import Skills from "./Skills";
 import Projects from "./Projects";
 import Documentation from "./Documentation";
 import Footer from "./Footer";
@@ -14,10 +12,8 @@ export default function Portfolio() {
       <Navbar />
       <main>
         <Hero />
-        <About />
+        <BentoSection />
         <Experience />
-        <Education />
-        <Skills />
         <Projects />
         <Documentation />
       </main>
