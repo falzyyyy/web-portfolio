@@ -37,6 +37,15 @@ export interface Documentation {
   imageUrl: string;
 }
 
+export interface Certificate {
+  id: string;
+  title: string;
+  issuer: string;
+  year: string;
+  type: "Academic" | "Organization" | "Non-Academic";
+  imageUrl: string;
+}
+
 export interface SocialLink {
   label: string;
   url: string;
@@ -212,6 +221,42 @@ export const documentations: Documentation[] = [
     title: "Cloud Capstone Architecture Meeting",
     category: "Project",
     imageUrl: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=800",
+  },
+];
+
+/* ── Certificates ── */
+export const defaultCertificates: Certificate[] = [
+  {
+    id: "cert-1",
+    title: "Informatics Engineering Graduate Dean's List",
+    issuer: "Faculty of Computer Science, Sriwijaya University",
+    year: "2025",
+    type: "Academic",
+    imageUrl: "https://images.unsplash.com/photo-1589330694653-ded6df53f6ee?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: "cert-2",
+    title: "Outstanding Public Relations Core Member",
+    issuer: "GDGoC Chapter Sriwijaya University",
+    year: "2024",
+    type: "Organization",
+    imageUrl: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: "cert-3",
+    title: "1st Place Winner - Futsal Dekan Cup",
+    issuer: "Fasilkom Unsri Sports Division",
+    year: "2024",
+    type: "Non-Academic",
+    imageUrl: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=800",
+  },
+  {
+    id: "cert-4",
+    title: "Cloud Computing Graduate Specialist",
+    issuer: "Bangkit Academy by Google, Tokopedia, Gojek, & Traveloka",
+    year: "2024",
+    type: "Academic",
+    imageUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=800",
   },
 ];
 

@@ -6,9 +6,10 @@ import ExperiencesManager from "./ExperiencesManager";
 import EducationManager from "./EducationManager";
 import ProjectsManager from "./ProjectsManager";
 import DocumentationsManager from "./DocumentationsManager";
-import { FiLogOut, FiHome, FiUser, FiBriefcase, FiBookOpen, FiFolder, FiImage, FiMenu, FiX, FiSettings, FiSearch } from "react-icons/fi";
+import CertificatesManager from "./CertificatesManager";
+import { FiLogOut, FiHome, FiUser, FiBriefcase, FiBookOpen, FiFolder, FiImage, FiMenu, FiX, FiSettings, FiSearch, FiAward } from "react-icons/fi";
 
-type Tab = "profile" | "experiences" | "education" | "projects" | "documentations";
+type Tab = "profile" | "experiences" | "education" | "projects" | "certificates" | "documentations";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -25,6 +26,7 @@ export default function AdminDashboard() {
     { id: "experiences", label: "Experiences", icon: <FiBriefcase size={14} />, color: "bg-[var(--tag-yellow-bg)] text-[var(--tag-yellow-text)]" },
     { id: "education", label: "Education", icon: <FiBookOpen size={14} />, color: "bg-[var(--tag-purple-bg)] text-[var(--tag-purple-text)]" },
     { id: "projects", label: "Projects", icon: <FiFolder size={14} />, color: "bg-[var(--tag-orange-bg)] text-[var(--tag-orange-text)]" },
+    { id: "certificates", label: "Certificates", icon: <FiAward size={14} />, color: "bg-[var(--tag-orange-bg)] text-[var(--tag-orange-text)]" },
     { id: "documentations", label: "Gallery", icon: <FiImage size={14} />, color: "bg-[var(--tag-pink-bg)] text-[var(--tag-pink-text)]" },
   ];
 
@@ -161,6 +163,7 @@ export default function AdminDashboard() {
             {activeTab === "experiences" && <ExperiencesManager />}
             {activeTab === "education" && <EducationManager />}
             {activeTab === "projects" && <ProjectsManager />}
+            {activeTab === "certificates" && <CertificatesManager />}
             {activeTab === "documentations" && <DocumentationsManager />}
           </div>
         </div>
