@@ -1,136 +1,88 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { HiArrowDown as ArrowDownIcon } from "react-icons/hi";
-import { FiDownload, FiArrowRight, FiZap, FiCalendar, FiUser } from "react-icons/fi";
 import { supabase } from "../lib/supabase";
+import { 
+  Monitor, 
+  Cpu, 
+  Users, 
+  ArrowRight, 
+  Download, 
+  ArrowDown 
+} from "lucide-react";
 
 export default function Hero() {
   const [profile, setProfile] = useState<any>(null);
+  const [featuredProject, setFeaturedProject] = useState<any>(null);
 
   useEffect(() => {
-    const fetchProfile = async () => {
-      const { data } = await supabase.from("profiles").select("*").single();
-      if (data) setProfile(data);
+    const fetchData = async () => {
+      const { data: profileData } = await supabase.from("profiles").select("*").single();
+      if (profileData) setProfile(profileData);
+
+      const { data: projectData } = await supabase.from("projects").select("*").limit(1);
+      if (projectData && projectData.length > 0) {
+        setFeaturedProject(projectData[0]);
+      }
     };
-    fetchProfile();
+    fetchData();
   }, []);
 
-  // Use fallback values if not loaded
   const name = profile?.name || "Naufal Nazhif Almaulidzar";
   const tagline = profile?.tagline || "Fresh Graduate of Informatics Engineering, University of Sriwijaya. Passionate about technology, communication, and creating impactful solutions.";
   const roles = profile?.roles || ["IT Professional", "Software Engineer", "Public Relations"];
   const resumeUrl = profile?.resume_url || "#";
   const avatarUrl = profile?.avatar_url || "/profile.jpg";
 
+  // Split name to highlight middle name in Brutalist Pill style
+  const nameParts = name.split(" ");
+  const firstName = nameParts[0] || "Naufal";
+  const middleName = nameParts[1] ? nameParts[1].toUpperCase() : "NAZHIF";
+  const lastName = nameParts.slice(2).join(" ") || "Almaulidzar";
+
+  const defaultProject = {
+    title: "RSMH Online Attendance App",
+    image_url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
+    live_url: "#"
+  };
+  const projectToDisplay = featuredProject || defaultProject;
+
   return (
     <section
       id="hero"
       className="relative min-h-screen bg-[var(--theme-bg)] flex flex-col justify-start pt-24 pb-10 px-4 sm:px-6 overflow-hidden"
     >
-      <div className="max-w-5xl mx-auto w-full border-2.5 border-[var(--theme-border)] rounded-2xl overflow-hidden bg-[var(--theme-bg-card)] shadow-[6px_6px_0px_0px_var(--theme-border)]">
-        {/* Notion-style Page Cover Banner (3D Asset Layout) */}
-        <div className="relative h-48 sm:h-64 w-full overflow-hidden border-b-2.5 border-[var(--theme-border)] bg-zinc-100 dark:bg-zinc-800">
-          <img 
-            src="/notion-cover.png" 
-            alt="Notion Style 3D Cover" 
-            className="w-full h-full object-cover"
-          />
-          {/* Workspace Status Badge */}
-          <div className="absolute top-4 right-4 px-3 py-1 bg-white border-2 border-black rounded-lg text-xs font-mono font-bold shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] text-[#18181b]">
-            🔒 Workspace: Public
-          </div>
-          
-          {/* Floating Mascot (3D rocket-laptop icon from public folder) */}
-          <div className="absolute right-6 -bottom-8 w-24 h-24 sm:w-32 sm:h-32 z-10 animate-float pointer-events-none drop-shadow-[5px_5px_0px_rgba(0,0,0,0.15)]">
-            <img 
-              src="/notion-avatar.png" 
-              alt="3D Rocket Laptop Mascot" 
-              className="w-full h-full object-contain"
-            />
-          </div>
-        </div>
+      {/* Title Header: Own the CODE Keep the VIBE style - customized to Naufal's name */}
+      <div className="text-center md:text-left mb-10 max-w-5xl mx-auto w-full px-2">
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-heading font-extrabold tracking-tight text-[var(--theme-text-primary)] leading-tight select-none">
+          {firstName} <span className="relative inline-block px-3 py-1 text-white bg-black dark:bg-white dark:text-black rounded-xl transform -skew-x-6 shadow-[3px_3px_0px_0px_var(--notion-blue)]">{middleName}</span> {lastName}
+        </h1>
+      </div>
 
-        {/* Notion Page Icon Overlap */}
-        <div className="px-6 sm:px-12 relative flex flex-col sm:flex-row sm:items-end justify-between -mt-16 sm:-mt-20 mb-6">
-          <div className="relative flex-shrink-0 z-20">
-            {/* Profile photo in Neo-Brutalist Frame */}
-            <div className="w-24 h-24 sm:w-36 sm:h-36 rounded-2xl bg-[var(--theme-bg-card)] border-2.5 border-[var(--theme-border)] shadow-[4px_4px_0px_0px_var(--theme-border)] overflow-hidden p-1 flex items-center justify-center hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_var(--theme-border)] transition-all duration-250">
-              <img 
-                src={avatarUrl} 
-                alt={name} 
-                className="w-full h-full rounded-xl object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = "https://ui-avatars.com/api/?name=Naufal+Nazhif&background=bae6fd&color=0369a1&size=128";
-                }}
-              />
-            </div>
+      {/* Main Grid Wrapper Card */}
+      <div className="max-w-5xl mx-auto w-full border-2.5 border-black dark:border-[var(--theme-border)] rounded-3xl bg-[#ff6f59] p-6 sm:p-10 shadow-[6px_6px_0px_0px_black] dark:shadow-[6px_6px_0px_0px_var(--theme-border)] relative overflow-visible flex flex-col md:flex-row gap-8 items-center justify-between">
+        
+        {/* Left Column (Spans 5/12 of space on large screens) */}
+        <div className="w-full md:w-5/12 flex flex-col justify-between self-stretch text-white z-10">
+          <div className="space-y-4">
+            <span className="inline-block bg-white/20 border border-white/30 text-white font-mono text-[9px] uppercase font-bold px-3 py-1 rounded-full w-fit">
+              🎓 Fresh Graduate
+            </span>
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-extrabold leading-tight">
+              Where Code Meets Connection
+            </h2>
+            <p className="text-xs sm:text-sm font-sans font-medium leading-relaxed text-white/90">
+              {tagline}
+            </p>
           </div>
 
-          {/* Saturated Option tags */}
-          <div className="flex flex-wrap gap-2 mt-4 sm:mt-0 font-heading">
-            {roles.map((role: string, idx: number) => {
-              const tagsColors = [
-                "bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)]",
-                "bg-[var(--tag-purple-bg)] text-[var(--tag-purple-text)]",
-                "bg-[var(--tag-yellow-bg)] text-[var(--tag-yellow-text)]"
-              ];
-              const colorClass = tagsColors[idx % tagsColors.length];
-              
-              return (
-                <span 
-                  key={idx} 
-                  className={`notion-tag ${colorClass}`}
-                >
-                  {role}
-                </span>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Details & Body */}
-        <div className="px-6 sm:px-12 pb-12 pt-2">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            {/* Breadcrumb info with clean mini icons */}
-            <div className="text-xs font-mono font-bold text-[var(--theme-text-muted)] mb-5 flex flex-wrap items-center gap-x-4 gap-y-2">
-              <span className="flex items-center gap-1.5">
-                <FiCalendar className="text-[var(--theme-text-primary)]" />
-                Last edited: {new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-              </span>
-              <span className="hidden sm:inline text-zinc-300 dark:text-zinc-700">|</span>
-              <span className="flex items-center gap-1.5">
-                <FiUser className="text-[var(--theme-text-primary)]" />
-                Author: Naufal
-              </span>
-            </div>
-
-            {/* Document Header Title */}
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-heading font-extrabold tracking-tight text-[var(--theme-text-primary)] mb-6 leading-tight">
-              {name}
-            </h1>
-
-            {/* Notion Callout block with Orange highlight */}
-            <div className="notion-callout mb-8">
-              <div className="p-2 bg-[var(--tag-orange-bg)] text-[var(--tag-orange-text)] border border-[var(--theme-border)] shadow-[1px_1px_0px_0px_var(--theme-border)] rounded-md notion-callout-icon">
-                <FiZap size={18} />
-              </div>
-              <div>
-                <h4 className="font-heading font-extrabold text-sm text-[var(--theme-text-primary)] mb-1">About Me</h4>
-                <p className="text-sm sm:text-base text-[var(--theme-text-secondary)] leading-relaxed font-medium">
-                  {tagline}
-                </p>
-              </div>
-            </div>
-
-            {/* Action buttons */}
-            <div className="flex flex-wrap items-center gap-4">
-              <a href="#projects" className="neo-brutal-btn bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)]">
+          <div className="mt-8 space-y-5">
+            {/* CTA Action Buttons */}
+            <div className="flex flex-wrap items-center gap-3">
+              <a 
+                href="#projects" 
+                className="bg-white text-black font-heading font-bold px-4 py-2.5 rounded-full hover:bg-zinc-100 transition-all border border-black shadow-[2.5px_2.5px_0px_0px_black] active:translate-x-0.5 active:translate-y-0.5 text-xs flex items-center gap-1.5 cursor-pointer"
+              >
                 <span>View Projects</span>
-                <FiArrowRight size={16} />
+                <ArrowRight size={13} />
               </a>
               
               {resumeUrl && resumeUrl !== "#" && (
@@ -138,27 +90,117 @@ export default function Hero() {
                   href={resumeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="neo-brutal-btn bg-[var(--tag-purple-bg)] text-[var(--tag-purple-text)]"
+                  className="border-2 border-white hover:bg-white/10 text-white font-heading font-bold px-4 py-2 rounded-full transition-all text-xs flex items-center gap-1.5 cursor-pointer"
                 >
-                  <FiDownload size={16} />
+                  <Download size={13} />
                   <span>Download CV</span>
                 </a>
               )}
             </div>
-          </motion.div>
+
+            {/* Social / Active Badge Section */}
+            <div className="flex items-center gap-3 pt-2">
+              <div className="flex -space-x-2">
+                <span className="w-6 h-6 rounded-full border border-black bg-zinc-900 flex items-center justify-center text-[10px] font-bold text-white shadow-[1px_1px_0px_0px_black]">G</span>
+                <span className="w-6 h-6 rounded-full border border-black bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white shadow-[1px_1px_0px_0px_black]">L</span>
+                <span className="w-6 h-6 rounded-full border border-black bg-orange-500 flex items-center justify-center text-[10px] font-bold text-white shadow-[1px_1px_0px_0px_black]">E</span>
+              </div>
+              <span className="text-[10px] font-mono font-bold text-white/80">Active on GitHub, LinkedIn & Email</span>
+            </div>
+          </div>
         </div>
+
+        {/* Center Column: Portrait Photo with slight rotation overlap (Spans 3.5/12) */}
+        <div className="relative flex-shrink-0 z-20 my-6 md:my-0">
+          <div className="w-60 sm:w-64 aspect-[3/4] rounded-2xl border-2.5 border-black bg-white dark:bg-zinc-800 shadow-[5px_5px_0px_0px_black] dark:shadow-[5px_5px_0px_0px_var(--theme-border)] overflow-hidden rotate-[-2deg] hover:rotate-[0deg] transition-all duration-300 transform md:-translate-y-12 md:scale-105 flex flex-col p-2">
+            <div className="w-full h-full rounded-xl overflow-hidden border border-black bg-zinc-100">
+              <img 
+                src={avatarUrl} 
+                alt={name} 
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src = "https://ui-avatars.com/api/?name=Naufal+Nazhif&background=bae6fd&color=0369a1&size=256";
+                }}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column: Roles & Mini OS Window Featured Project (Spans 3.5/12) */}
+        <div className="w-full md:w-3.5/12 flex flex-col justify-between self-stretch z-10 gap-6">
+          
+          {/* Roles Tags */}
+          <div className="space-y-2.5">
+            {roles.map((role: string, idx: number) => (
+              <div 
+                key={idx} 
+                className="flex items-center gap-2.5 text-white font-heading font-bold text-xs uppercase bg-white/10 border border-white/20 px-3 py-2 rounded-xl"
+              >
+                <span className="p-1 rounded-lg bg-white/20 flex items-center justify-center text-white">
+                  {idx === 0 && <Monitor size={12} />}
+                  {idx === 1 && <Cpu size={12} />}
+                  {idx === 2 && <Users size={12} />}
+                </span>
+                <span className="truncate">{role}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Mini Finder Window Card (Featured Project) */}
+          <div>
+            <span className="text-[9px] font-mono font-bold tracking-widest text-white/80 uppercase mb-2 block">
+              Featured Work
+            </span>
+            <div className="bg-white dark:bg-zinc-900 border-2 border-black rounded-2xl overflow-hidden shadow-[3px_3px_0px_0px_black] p-3 text-black dark:text-white flex flex-col gap-2 w-full max-w-[230px] mx-auto md:mx-0">
+              {/* Finder bar */}
+              <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-1.5">
+                <div className="flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#ff5f56]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#ffbd2e]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#27c93f]" />
+                </div>
+                <span className="text-[8px] font-mono text-zinc-400 select-none">work_item.jpg</span>
+              </div>
+              
+              {/* Image preview */}
+              <div className="aspect-[4/3] rounded-lg overflow-hidden border border-black bg-zinc-50 relative">
+                <img 
+                  src={projectToDisplay.image_url || projectToDisplay.imageUrl || defaultProject.image_url} 
+                  alt={projectToDisplay.title} 
+                  className="w-full h-full object-cover" 
+                />
+              </div>
+              
+              {/* Card Footer */}
+              <div className="flex flex-col justify-between">
+                <h5 className="font-heading font-extrabold text-[10px] leading-tight line-clamp-1">
+                  {projectToDisplay.title}
+                </h5>
+                <div className="flex items-center justify-between mt-2 pt-1.5 border-t border-zinc-100 dark:border-zinc-800">
+                  <span className="text-[8px] font-mono text-zinc-400">Status</span>
+                  <a 
+                    href={projectToDisplay.live_url || projectToDisplay.liveUrl || "#projects"} 
+                    className="px-2.5 py-0.5 bg-[var(--tag-green-bg)] text-[var(--tag-green-text)] rounded text-[8px] font-bold border border-black shadow-[1px_1px_0px_0px_black] active:translate-x-[0.5px] active:translate-y-[0.5px] cursor-pointer"
+                  >
+                    LIVE ↗
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
       </div>
 
       {/* Down arrow scroll helper */}
       <div className="flex justify-center mt-8">
-        <motion.a
+        <a
           href="#about"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-          className="p-3 rounded-xl border-2 border-[var(--theme-border)] bg-[var(--theme-bg-card)] shadow-[3px_3px_0px_0px_var(--theme-border)] text-[var(--theme-text-secondary)] hover:text-black hover:bg-[var(--tag-yellow-bg)] transition-colors cursor-pointer"
+          className="p-3 rounded-xl border-2 border-black bg-[var(--theme-bg-card)] shadow-[3px_3px_0px_0px_black] text-[var(--theme-text-secondary)] hover:text-black hover:bg-[var(--tag-yellow-bg)] transition-colors cursor-pointer"
         >
-          <ArrowDownIcon size={18} />
-        </motion.a>
+          <ArrowDown size={18} />
+        </a>
       </div>
     </section>
   );
