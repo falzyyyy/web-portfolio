@@ -60,9 +60,21 @@ export default function Certificates() {
 
         {/* Physical Folder Tabs Container */}
         <div className="relative">
+          {/* Style sheet injection to hide webkit scrollbars locally */}
+          <style>{`
+            .scrollbar-none::-webkit-scrollbar {
+              display: none;
+            }
+          `}</style>
           
           {/* Folder Tabs Headers */}
-          <div className="flex items-end pl-2 sm:pl-4 space-x-1.5 z-0 relative">
+          <div 
+            className="flex items-end pl-2 sm:pl-4 space-x-1.5 z-0 relative overflow-x-auto flex-nowrap scrollbar-none pb-[2.5px]"
+            style={{
+              msOverflowStyle: "none",
+              scrollbarWidth: "none",
+            }}
+          >
             {categories.map((cat) => {
               const isActive = activeCategory === cat;
               return (
@@ -70,7 +82,7 @@ export default function Certificates() {
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
                   className={cn(
-                    "px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-heading font-bold rounded-t-xl border-t-2.5 border-x-2.5 border-black transition-all cursor-pointer relative",
+                    "px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-heading font-bold rounded-t-xl border-t-2.5 border-x-2.5 border-black transition-all cursor-pointer relative flex-shrink-0",
                     isActive
                       ? "bg-[var(--theme-bg-card)] text-[var(--theme-text-primary)] translate-y-[2.5px] z-20 pb-3"
                       : "bg-zinc-200 dark:bg-zinc-800 text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] translate-y-0 z-10 hover:-translate-y-0.5"

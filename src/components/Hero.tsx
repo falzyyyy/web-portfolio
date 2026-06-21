@@ -63,9 +63,9 @@ export default function Hero() {
       className="relative min-h-screen bg-[var(--theme-bg)] flex flex-col justify-start pt-24 pb-10 px-4 sm:px-6 overflow-hidden"
     >
       {/* Title Header: Own the CODE Keep the VIBE style - customized to Naufal's name */}
-      <div className="text-center md:text-left mb-10 max-w-5xl mx-auto w-full px-2">
-        <h1 className="text-4xl sm:text-6xl md:text-7xl font-heading font-extrabold tracking-tight text-[var(--theme-text-primary)] leading-tight select-none">
-          {firstName} <span className="relative inline-block px-3 py-1 text-white bg-black dark:bg-white dark:text-black rounded-xl transform -skew-x-6 shadow-[3px_3px_0px_0px_var(--notion-blue)]">{middleName}</span> {lastName}
+      <div className="text-center md:text-left mb-8 sm:mb-10 max-w-5xl mx-auto w-full px-2 mt-2 sm:mt-0">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-extrabold tracking-tight text-[var(--theme-text-primary)] leading-tight select-none">
+          {firstName} <span className="relative inline-block px-2.5 py-0.5 sm:px-3 sm:py-1 text-white bg-black dark:bg-white dark:text-black rounded-lg sm:rounded-xl transform -skew-x-6 shadow-[2.5px_2.5px_0px_0px_var(--notion-blue)]">{middleName}</span> {lastName}
         </h1>
       </div>
 
@@ -142,8 +142,8 @@ export default function Hero() {
         </div>
 
         {/* Center Column: Portrait Photo with slight rotation overlap (Spans 3.5/12) */}
-        <div className="relative flex-shrink-0 z-20 my-6 md:my-0">
-          <div className="w-60 sm:w-64 aspect-[3/4] rounded-2xl border-2.5 border-black bg-white dark:bg-zinc-800 shadow-[5px_5px_0px_0px_black] dark:shadow-[5px_5px_0px_0px_var(--theme-border)] overflow-hidden rotate-[-2deg] hover:rotate-[0deg] transition-all duration-300 transform md:-translate-y-12 md:scale-105 flex flex-col p-2">
+        <div className="relative flex-shrink-0 z-20 my-4 md:my-0 w-full max-w-[240px] sm:w-60 md:w-64 flex justify-center">
+          <div className="w-full aspect-[3/4] rounded-2xl border-2.5 border-black bg-white dark:bg-zinc-800 shadow-[5px_5px_0px_0px_black] dark:shadow-[5px_5px_0px_0px_var(--theme-border)] overflow-hidden rotate-[-2deg] hover:rotate-[0deg] transition-all duration-300 transform md:-translate-y-12 md:scale-105 flex flex-col p-2">
             <div className="w-full h-full rounded-xl overflow-hidden border border-black bg-zinc-100">
               <img 
                 src={avatarUrl} 
@@ -178,11 +178,11 @@ export default function Hero() {
           </div>
 
           {/* Mini Finder Window Card (Featured Project) */}
-          <div>
-            <span className="text-[9px] font-mono font-bold tracking-widest text-white/80 uppercase mb-2 block">
+          <div className="w-full flex flex-col items-center md:items-start">
+            <span className="text-[9px] font-mono font-bold tracking-widest text-white/80 uppercase mb-2 block self-start">
               Featured Work
             </span>
-            <div className="bg-white dark:bg-zinc-900 border-2 border-black rounded-2xl overflow-hidden shadow-[3px_3px_0px_0px_black] p-3 text-black dark:text-white flex flex-col gap-2 w-full max-w-[230px] mx-auto md:mx-0">
+            <div className="bg-white dark:bg-zinc-900 border-2 border-black rounded-2xl overflow-hidden shadow-[3px_3px_0px_0px_black] p-3 text-black dark:text-white flex flex-col gap-2 w-full max-w-[240px]">
               {/* Finder bar */}
               <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-1.5">
                 <div className="flex items-center gap-1">
