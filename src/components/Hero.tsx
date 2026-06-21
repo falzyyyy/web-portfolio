@@ -6,7 +6,8 @@ import {
   Users, 
   ArrowRight, 
   Download, 
-  ArrowDown 
+  ArrowDown,
+  Sparkles
 } from "lucide-react";
 
 export default function Hero() {
@@ -18,7 +19,7 @@ export default function Hero() {
       const { data: profileData } = await supabase.from("profiles").select("*").single();
       if (profileData) setProfile(profileData);
 
-      const { data: projectData } = await supabase.from("projects").select("*").limit(1);
+      const { data: projectData } = await supabase.from("projects").select("*").order("created_at", { ascending: false }).limit(1);
       if (projectData && projectData.length > 0) {
         setFeaturedProject(projectData[0]);
       }
@@ -38,12 +39,23 @@ export default function Hero() {
   const middleName = nameParts[1] ? nameParts[1].toUpperCase() : "NAZHIF";
   const lastName = nameParts.slice(2).join(" ") || "Almaulidzar";
 
+  // Featured project fallback and layout logic
   const defaultProject = {
     title: "RSMH Online Attendance App",
     image_url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=800",
-    live_url: "#"
+    live_url: "https://rsmh.co.id"
   };
+  
   const projectToDisplay = featuredProject || defaultProject;
+  
+  // Dynamic image fetching for screenshot API fallback (same as Projects.tsx)
+  let projectImg = projectToDisplay.image_url || (projectToDisplay as any).imageUrl;
+  if (!projectImg && projectToDisplay.live_url && projectToDisplay.live_url !== "#") {
+    projectImg = `https://api.microlink.io/?url=${encodeURIComponent(projectToDisplay.live_url)}&screenshot=true&meta=false&embed=screenshot.url`;
+  }
+  if (!projectImg) {
+    projectImg = defaultProject.image_url;
+  }
 
   return (
     <section
@@ -58,8 +70,27 @@ export default function Hero() {
       </div>
 
       {/* Main Grid Wrapper Card */}
-      <div className="max-w-5xl mx-auto w-full border-2.5 border-black dark:border-[var(--theme-border)] rounded-3xl bg-[#ff6f59] p-6 sm:p-10 shadow-[6px_6px_0px_0px_black] dark:shadow-[6px_6px_0px_0px_var(--theme-border)] relative overflow-visible flex flex-col md:flex-row gap-8 items-center justify-between">
+      <div className="max-w-5xl mx-auto w-full border-2.5 border-black dark:border-[var(--theme-border)] rounded-3xl bg-[var(--notion-blue)] dark:bg-blue-700 p-6 sm:p-10 shadow-[6px_6px_0px_0px_black] dark:shadow-[6px_6px_0px_0px_var(--theme-border)] relative overflow-hidden flex flex-col md:flex-row gap-8 items-center justify-between">
         
+        {/* Card Background Grid and Silhouettes Overlay */}
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0c_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0c_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none rounded-3xl z-0" />
+        
+        {/* Large abstract code bracket and tag silhouettes */}
+        <div className="absolute right-12 bottom-6 text-[180px] font-mono font-extrabold text-white/5 select-none pointer-events-none leading-none rotate-[15deg] z-0">
+          {"</>"}
+        </div>
+        <div className="absolute left-6 top-6 text-[140px] font-mono font-extrabold text-white/5 select-none pointer-events-none leading-none rotate-[-12deg] z-0">
+          {"{}"}
+        </div>
+        
+        {/* Decorative Floating Sparkles */}
+        <div className="absolute left-1/4 top-10 text-white/15 animate-bounce pointer-events-none z-0">
+          <Sparkles size={24} />
+        </div>
+        <div className="absolute right-1/3 bottom-12 text-white/15 animate-pulse pointer-events-none z-0">
+          <Sparkles size={18} />
+        </div>
+
         {/* Left Column (Spans 5/12 of space on large screens) */}
         <div className="w-full md:w-5/12 flex flex-col justify-between self-stretch text-white z-10">
           <div className="space-y-4">
@@ -165,7 +196,7 @@ export default function Hero() {
               {/* Image preview */}
               <div className="aspect-[4/3] rounded-lg overflow-hidden border border-black bg-zinc-50 relative">
                 <img 
-                  src={projectToDisplay.image_url || projectToDisplay.imageUrl || defaultProject.image_url} 
+                  src={projectImg} 
                   alt={projectToDisplay.title} 
                   className="w-full h-full object-cover" 
                 />
