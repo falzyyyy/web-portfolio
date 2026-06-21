@@ -4,8 +4,6 @@ import { defaultCertificates, Certificate } from "../data/portfolio-data";
 import { cn } from "../utils/cn";
 import { 
   Award, 
-  ChevronLeft, 
-  ChevronRight, 
   Maximize2, 
   X, 
   Calendar, 
@@ -15,8 +13,7 @@ import {
 
 export default function Certificates() {
   const [certs, setCerts] = useState<Certificate[]>([]);
-  const [activeCategory, setActiveCategory] = useState<string>("All");
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [activeCategory, setActiveCategory] = useState<string>("Academic");
   const [selectedCert, setSelectedCert] = useState<Certificate | null>(null);
 
   useEffect(() => {
@@ -27,53 +24,31 @@ export default function Certificates() {
           .select("*")
           .order("created_at", { ascending: false });
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
 
         if (data && data.length > 0) {
           setCerts(data);
         } else {
-          // Empty state fallback
           setCerts(defaultCertificates);
         }
       } catch (err: any) {
-        console.warn("Supabase certificates table not found or failed to fetch. Falling back to static mock data.", err.message);
+        console.warn("Supabase certificates table failed to fetch. Falling back to static mock data.", err.message);
         setCerts(defaultCertificates);
       }
     };
     fetchCertificates();
   }, []);
 
-  const categories = ["All", "Academic", "Organization", "Non-Academic"];
+  const categories = ["Academic", "Organization", "Non-Academic"];
 
-  const filteredCerts = certs.filter(c => 
-    activeCategory === "All" ? true : c.type === activeCategory
-  );
-
-  const handlePrev = () => {
-    setCurrentIndex(prev => 
-      prev === 0 ? Math.max(0, filteredCerts.length - 1) : prev - 1
-    );
-  };
-
-  const handleNext = () => {
-    setCurrentIndex(prev => 
-      prev === Math.max(0, filteredCerts.length - 1) ? 0 : prev + 1
-    );
-  };
-
-  // Reset index when category changes
-  useEffect(() => {
-    setCurrentIndex(0);
-  }, [activeCategory]);
+  const filteredCerts = certs.filter(c => c.type === activeCategory);
 
   return (
     <section id="certificates" className="py-16 px-4 sm:px-6 bg-[var(--theme-bg)]">
       <div className="max-w-5xl mx-auto">
         
         {/* Section Label */}
-        <div className="flex items-center gap-2 mb-8 font-mono text-sm">
+        <div className="flex items-center gap-2 mb-10 font-mono text-sm">
           <span className="font-bold text-[var(--theme-text-muted)] text-base">05.</span>
           <span className="text-[var(--theme-text-muted)]">workspace</span>
           <span className="text-[var(--theme-text-muted)]">/</span>
@@ -83,134 +58,117 @@ export default function Certificates() {
           <h2 className="font-heading font-extrabold text-[var(--theme-text-primary)]">Certificates & Achievements</h2>
         </div>
 
-        {/* Filter Controls */}
-        <div className="flex flex-wrap items-center gap-2.5 mb-8">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={cn(
-                "px-3.5 py-1.5 text-xs font-heading font-bold rounded-lg border-2 border-black transition-all cursor-pointer",
-                activeCategory === cat
-                  ? "bg-[var(--theme-border)] text-white shadow-[2px_2px_0px_0px_var(--theme-border)] dark:shadow-[2px_2px_0px_0px_white] dark:border-white translate-y-0.5"
-                  : "bg-[var(--theme-bg-card)] text-[var(--theme-text-primary)] shadow-[3px_3px_0px_0px_black] hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_0px_black]"
-              )}
-            >
-              {cat === "Non-Academic" ? "⚽ Non-Academic (Sports)" : cat}
-            </button>
-          ))}
-        </div>
-
-        {filteredCerts.length === 0 ? (
-          <div className="border-2.5 border-dashed border-[var(--theme-border)] p-12 text-center rounded-2xl bg-[var(--theme-bg-card)] shadow-[4px_4px_0px_0px_var(--theme-border)]">
-            <p className="font-mono text-xs text-[var(--theme-text-muted)]">No certificates found in this category.</p>
+        {/* Physical Folder Tabs Container */}
+        <div className="relative">
+          
+          {/* Folder Tabs Headers */}
+          <div className="flex items-end pl-2 sm:pl-4 space-x-1.5 z-0 relative">
+            {categories.map((cat) => {
+              const isActive = activeCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={cn(
+                    "px-4 sm:px-6 py-2.5 text-xs sm:text-sm font-heading font-bold rounded-t-xl border-t-2.5 border-x-2.5 border-black transition-all cursor-pointer relative",
+                    isActive
+                      ? "bg-[var(--theme-bg-card)] text-[var(--theme-text-primary)] translate-y-[2.5px] z-20 pb-3"
+                      : "bg-zinc-200 dark:bg-zinc-800 text-[var(--theme-text-muted)] hover:text-[var(--theme-text-primary)] translate-y-0 z-10 hover:-translate-y-0.5"
+                  )}
+                  style={{
+                    borderBottom: isActive ? "2.5px solid var(--theme-bg-card)" : "none"
+                  }}
+                >
+                  <span className="flex items-center gap-1.5">
+                    {cat === "Academic" && "🎓"}
+                    {cat === "Organization" && "👥"}
+                    {cat === "Non-Academic" && "⚽"}
+                    <span>{cat === "Non-Academic" ? "Non-Academic" : cat}</span>
+                  </span>
+                </button>
+              );
+            })}
           </div>
-        ) : (
-          <div className="relative">
-            {/* Slider view port */}
-            <div className="overflow-hidden p-2">
-              <div 
-                className="flex gap-6 transition-transform duration-500 ease-in-out"
-                style={{
-                  transform: `translateX(-${currentIndex * (100 + 4)}%)`,
-                  width: `${filteredCerts.length * 100}%`
-                }}
-              >
-                {filteredCerts.map((cert) => {
-                  const badgeColors = {
-                    "Academic": "bg-[var(--tag-green-bg)] text-[var(--tag-green-text)]",
-                    "Organization": "bg-[var(--tag-purple-bg)] text-[var(--tag-purple-text)]",
-                    "Non-Academic": "bg-[var(--tag-brown-bg)] text-[var(--tag-brown-text)]"
-                  };
-                  const badgeColor = badgeColors[cert.type] || "bg-[var(--tag-gray-bg)] text-[var(--tag-gray-text)]";
 
+          {/* Main Folder Content Box */}
+          <div className="relative z-10 bg-[var(--theme-bg-card)] border-2.5 border-black rounded-r-2xl rounded-bl-2xl p-6 sm:p-8 shadow-[5px_5px_0px_0px_black] dark:shadow-[5px_5px_0px_0px_var(--theme-border)]">
+            
+            {filteredCerts.length === 0 ? (
+              <div className="border-2 border-dashed border-[var(--theme-border)] p-12 text-center rounded-xl bg-[var(--theme-bg)]">
+                <p className="font-mono text-xs text-[var(--theme-text-muted)]">No certificates uploaded under this category yet.</p>
+              </div>
+            ) : (
+              /* Grid of MacOS Window Cards */
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                {filteredCerts.map((cert) => {
+                  const img = cert.imageUrl || (cert as any).image_url;
+                  
                   return (
                     <div 
                       key={cert.id} 
-                      className="w-full border-2.5 border-black dark:border-[var(--theme-border)] bg-[var(--theme-bg-card)] rounded-2xl p-5 flex flex-col md:flex-row gap-6 items-center shadow-[5px_5px_0px_0px_black] dark:shadow-[5px_5px_0px_0px_var(--theme-border)] flex-shrink-0"
+                      onClick={() => setSelectedCert(cert)}
+                      className="border-2 border-black dark:border-[var(--theme-border)] rounded-xl overflow-hidden bg-white dark:bg-zinc-900 shadow-[3px_3px_0px_0px_black] dark:shadow-[3px_3px_0px_0px_var(--theme-border)] hover:-translate-y-1.5 hover:shadow-[5.5px_5.5px_0px_0px_black] dark:hover:shadow-[5.5px_5.5px_0px_0px_var(--theme-border)] transition-all duration-300 flex flex-col justify-between cursor-pointer group"
                     >
-                      {/* Left: Certificate Preview Card */}
-                      <div 
-                        onClick={() => setSelectedCert(cert)}
-                        className="w-full md:w-1/2 aspect-[4/3] border-2 border-black rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 shadow-[2px_2px_0px_0px_black] relative group cursor-pointer"
-                      >
-                        <img 
-                          src={cert.imageUrl} 
-                          alt={cert.title} 
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105 duration-300"
-                        />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-mono text-xs font-bold gap-2">
-                          <Maximize2 size={16} />
-                          <span>Zoom Certificate</span>
+                      {/* MacOS Window Titlebar */}
+                      <div className="flex items-center justify-between px-3.5 py-2.5 bg-zinc-100 dark:bg-zinc-800 border-b-2 border-black dark:border-[var(--theme-border)]">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
+                          <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
+                        </div>
+                        <span className="text-[9px] font-mono font-bold text-zinc-400 select-none">
+                          cert_preview.jpg
+                        </span>
+                      </div>
+
+                      {/* Certificate Document Screenshot Area */}
+                      <div className="aspect-[4/3] w-full border-b border-black dark:border-[var(--theme-border)] overflow-hidden relative bg-zinc-50 dark:bg-zinc-950">
+                        {img ? (
+                          <img 
+                            src={img} 
+                            alt={cert.title} 
+                            className="w-full h-full object-cover transition-transform group-hover:scale-[1.02] duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center font-mono text-[10px] text-zinc-400">
+                            No Credential Image
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center text-white font-mono text-[10px] font-bold gap-1.5">
+                          <Maximize2 size={12} />
+                          <span>Maximize</span>
                         </div>
                       </div>
 
-                      {/* Right: Info Card */}
-                      <div className="w-full md:w-1/2 flex flex-col justify-between self-stretch">
-                        <div className="space-y-4">
-                          <div className="flex flex-wrap items-center gap-2">
-                            <span className={cn("notion-tag text-[9px] font-sans font-bold", badgeColor)}>
-                              {cert.type === "Non-Academic" ? "⚽ Non-Academic" : cert.type}
-                            </span>
-                            <span className="notion-tag bg-[var(--tag-gray-bg)] text-[var(--tag-gray-text)] text-[9px] font-mono">
-                              <Calendar size={10} />
-                              {cert.year}
-                            </span>
-                          </div>
-
-                          <h3 className="text-xl sm:text-2xl font-heading font-extrabold text-[var(--theme-text-primary)] leading-tight">
+                      {/* Info details block */}
+                      <div className="p-4 flex flex-col justify-between flex-grow bg-white dark:bg-zinc-900">
+                        <div>
+                          <h4 className="font-heading font-extrabold text-sm text-[var(--theme-text-primary)] leading-snug line-clamp-2">
                             {cert.title}
-                          </h3>
-
-                          <p className="text-sm font-sans font-semibold text-[var(--theme-text-secondary)] flex items-start gap-2">
-                            <Bookmark className="w-4 h-4 text-zinc-500 mt-0.5 flex-shrink-0" />
+                          </h4>
+                          <p className="text-[10px] font-sans font-bold text-[var(--theme-text-secondary)] mt-1.5 flex items-start gap-1">
+                            <Bookmark className="w-3 h-3 text-zinc-500 mt-0.5 flex-shrink-0" />
                             <span>{cert.issuer}</span>
                           </p>
                         </div>
 
-                        <div className="mt-6 md:mt-0 pt-4 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
-                          <span className="text-[10px] font-mono font-bold text-[var(--theme-text-muted)]">
-                            Credential ID: {cert.id}
+                        <div className="mt-4 pt-2 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between text-[9px] font-mono font-bold text-[var(--theme-text-muted)]">
+                          <span className="flex items-center gap-1">
+                            <Calendar size={10} />
+                            {cert.year}
                           </span>
-                          <button 
-                            onClick={() => setSelectedCert(cert)}
-                            className="neo-brutal-btn bg-[var(--tag-blue-bg)] text-[var(--tag-blue-text)] text-xs py-1.5 flex items-center gap-1.5"
-                          >
-                            <Maximize2 size={12} />
-                            <span>Zoom View</span>
-                          </button>
+                          <span className="notion-tag bg-[var(--tag-gray-bg)] text-[var(--tag-gray-text)] text-[8px] py-0.5 px-1.5">
+                            {cert.type === "Non-Academic" ? "Sports" : cert.type}
+                          </span>
                         </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
-            </div>
-
-            {/* Slider Navigation controls */}
-            {filteredCerts.length > 1 && (
-              <div className="flex justify-end gap-3.5 mt-6">
-                <button 
-                  onClick={handlePrev}
-                  className="p-2 border-2 border-black bg-[var(--theme-bg-card)] rounded-lg shadow-[2.5px_2.5px_0px_0px_black] active:translate-x-0.5 active:translate-y-0.5 cursor-pointer text-[var(--theme-text-primary)] hover:bg-[var(--tag-gray-bg)]"
-                  aria-label="Previous Slide"
-                >
-                  <ChevronLeft size={18} />
-                </button>
-                <button 
-                  onClick={handleNext}
-                  className="p-2 border-2 border-black bg-[var(--theme-bg-card)] rounded-lg shadow-[2.5px_2.5px_0px_0px_black] active:translate-x-0.5 active:translate-y-0.5 cursor-pointer text-[var(--theme-text-primary)] hover:bg-[var(--tag-gray-bg)]"
-                  aria-label="Next Slide"
-                >
-                  <ChevronRight size={18} />
-                </button>
-              </div>
             )}
           </div>
-        )}
-
-        {/* Separator Line */}
-        <div className="mt-16 h-[2.5px] bg-[var(--theme-border)] origin-center" />
+        </div>
       </div>
 
       {/* Lightbox Zoom Modal */}
@@ -240,7 +198,7 @@ export default function Certificates() {
             {/* Modal Image Body */}
             <div className="relative w-full aspect-[4/3] bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center p-4">
               <img 
-                src={selectedCert.imageUrl} 
+                src={selectedCert.imageUrl || (selectedCert as any).image_url} 
                 alt={selectedCert.title} 
                 className="max-w-full max-h-[60vh] object-contain border border-black rounded-lg shadow-sm"
               />
@@ -248,9 +206,9 @@ export default function Certificates() {
 
             {/* Modal Info Footer */}
             <div className="p-5 border-t-2 border-black bg-[var(--theme-bg-card)]">
-              <h4 className="text-lg font-heading font-extrabold text-[var(--theme-text-primary)] mb-1">
+              <h3 className="text-lg font-heading font-extrabold text-[var(--theme-text-primary)] mb-1">
                 {selectedCert.title}
-              </h4>
+              </h3>
               <p className="text-xs font-mono font-bold text-[var(--theme-text-secondary)] uppercase tracking-wider">
                 Issued by {selectedCert.issuer} • {selectedCert.year}
               </p>
